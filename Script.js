@@ -1,86 +1,35 @@
-const products = [
-  {
-    name:"Solar Fan",
-    description:"Solar fan with 2 external bulbs, solar panel, rechargeable adaptor and Lithium battery",
-    price:69000,
-    img:"https://via.placeholder.com/250x200?text=Solar+Fan"
-  },
-  {
-    name:"Stainless Pot (Set of 6)",
-    description:"Original stainless pot, a set of 6 pieces cookware",
-    price:79000,
-    img:"https://via.placeholder.com/250x200?text=Stainless+Pot"
-  },
-  {
-    name:"14 PCs Aluminum Pot",
-    description:"A very durable set of 14 pieces aluminum pot with lids",
-    price:59000,
-    img:"https://via.placeholder.com/250x200?text=Aluminum+Pot"
-  }
-];
+callback:function(response){
+  let pickupCode = "K2C-" + Math.floor(100000 + Math.random() * 900000);
 
-let cart = JSON.parse(localStorage.getItem('cart')) || [];
-
-function displayProducts() {
-  const container = document.getElementById('products');
-  container.innerHTML = '';
-  products.forEach((p, i)=>{
-    container.innerHTML += `
-      <div class="product">
-        <img src="${p.img}" alt="${p.name}">
-        <h3>${p.name}</h3>
-        <p>${p.description}</p>
-        <p><strong>₦${p.price.toLocaleString()}</strong></p>
-        <button onclick="addToCart(${i})">Add to Cart</button>
-      </div>
-    `;
-  });
-}
-
-function addToCart(index) {
-  cart.push(products[index]);
-  localStorage.setItem('cart', JSON.stringify(cart));
-  displayCart();
-}
-
-function displayCart() {
-  const cartDiv = document.getElementById('cart-items');
-  if(cart.length === 0) { cartDiv.innerHTML = '<p>Your cart is empty</p>'; return; }
-  let html = '';
-  let total = 0;
-  cart.forEach((item,i)=>{
-    total += item.price;
-    html += `<p>${item.name} - ₦${item.price.toLocaleString()} <button onclick="removeFromCart(${i})">Remove</button></p>`;
-  });
-  html += `<p><strong>Total: ₦${total.toLocaleString()}</strong></p>`;
-  cartDiv.innerHTML = html;
-}
-
-function removeFromCart(index){
-  cart.splice(index,1);
-  localStorage.setItem('cart', JSON.stringify(cart));
-  displayCart();
-}
-
-document.getElementById('checkout').addEventListener('click', function(){
-  if(cart.length===0){ alert("Your cart is empty!"); return; }
+  let orderDetails = cart.map(item => item.name).join(", ");
   let totalAmount = cart.reduce((sum,item)=>sum+item.price,0);
-  let handler = PaystackPop.setup({
-    key: 'pk_test_1224eb0ed84251c2ca7babe4c33be28d5949783f',
-    email: 'customer@example.com',
-    amount: totalAmount*100,
-    currency:"NGN",
-    ref: ''+Math.floor((Math.random()*1000000000)+1),
-    callback:function(response){
-      alert('Payment successful! Reference: '+response.reference);
-      cart=[];
-      localStorage.removeItem('cart');
-      displayCart();
-    },
-    onClose:function(){ alert('Transaction cancelled.'); }
-  });
-  handler.openIframe();
-});
 
-displayProducts();
-displayCart();
+  // Message for YOU
+  let adminMessage = `New Order!\n\nItems: ${orderDetails}\nTotal: ₦${totalAmount}\nPickup Code: ${pickupCode}\nRef: ${response.reference}`;
+
+  let yourNumber = "2348134153644";
+  let adminURL = `https://wa.me/${yourNumber}?text=${encodeURIComponent(adminMessage)}`;
+
+  // Message for CUSTOMER
+  let customerMessage = `Thank you for shopping with K2C GLOBAL HUB 😊\n\nYour Order:\n${orderDetails}\n\nTotal: ₦${totalAmount}\n\nYour Pickup Code: ${pickupCode}\n\nPlease keep this code safe.`;
+
+  // SHOW CLEAR MESSAGE ON SCREEN
+  document.body.innerHTML = `
+    <div style="text-align:center; padding:30px; font-family:Arial;">
+      <h2>✅ Payment Successful!</h2>
+      <p><strong>Your Pickup Code:</strong></p>
+      <h1 style="color:#ff6f61;">${pickupCode}</h1>
+      <p>Please screenshot or copy this code.</p>
+      <p>We have also prepared your order details below:</p>
+      <p>${orderDetails}</p>
+      <p><strong>Total Paid: ₦${totalAmount}</strong></p>
+      <br>
+      <a href="${adminURL}" style="background:#25D366;color:white;padding:10px 20px;border-radius:5px;text-decoration:none;">
+        Send Order to Seller (WhatsApp)
+      </a>
+    </div>
+  `;
+
+  cart = [];
+  localStorage.removeItem('cart');
+}
