@@ -1,7 +1,22 @@
 const products = [
-  {name:"Solar Fan", price:69000, img:"https://via.placeholder.com/250x200?text=Solar+Fan"},
-  {name:"Stainless Pot (Set of 6)", price:79000, img:"https://via.placeholder.com/250x200?text=Stainless+Pot"},
-  {name:"14 PCs Aluminum Pot", price:59000, img:"https://via.placeholder.com/250x200?text=Aluminum+Pot"}
+  {
+    name:"Solar Fan",
+    description:"Solar fan with 2 external bulbs, solar panel, rechargeable adaptor and Lithium battery",
+    price:69000,
+    img:"https://via.placeholder.com/250x200?text=Solar+Fan"
+  },
+  {
+    name:"Stainless Pot (Set of 6)",
+    description:"Original stainless pot, a set of 6 pieces cookware",
+    price:79000,
+    img:"https://via.placeholder.com/250x200?text=Stainless+Pot"
+  },
+  {
+    name:"14 PCs Aluminum Pot",
+    description:"A very durable set of 14 pieces aluminum pot with lids",
+    price:59000,
+    img:"https://via.placeholder.com/250x200?text=Aluminum+Pot"
+  }
 ];
 
 let cart = JSON.parse(localStorage.getItem('cart')) || [];
@@ -14,7 +29,8 @@ function displayProducts() {
       <div class="product">
         <img src="${p.img}" alt="${p.name}">
         <h3>${p.name}</h3>
-        <p>₦${p.price.toLocaleString()}</p>
+        <p>${p.description}</p>
+        <p><strong>₦${p.price.toLocaleString()}</strong></p>
         <button onclick="addToCart(${i})">Add to Cart</button>
       </div>
     `;
